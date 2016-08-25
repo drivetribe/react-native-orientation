@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 class OrientationModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+
     private final BroadcastReceiver receiver;
 
     OrientationModule(ReactApplicationContext reactContext) {
@@ -62,7 +63,7 @@ class OrientationModule extends ReactContextBaseJavaModule implements LifecycleE
 
         String orientation = this.getOrientationString(orientationInt);
 
-        if (orientation.equals("null")) {
+        if (orientation.equals("UNKNOWN")) {
             callback.invoke(orientationInt, null);
         } else {
             callback.invoke(null, orientation);
@@ -118,11 +119,11 @@ class OrientationModule extends ReactContextBaseJavaModule implements LifecycleE
     public
     @Nullable
     Map<String, Object> getConstants() {
-        HashMap<String, Object> constants = new HashMap<String, Object>();
+        HashMap<String, Object> constants = new HashMap<>();
         int orientationInt = getReactApplicationContext().getResources().getConfiguration().orientation;
 
         String orientation = this.getOrientationString(orientationInt);
-        if (orientation == "null") {
+        if (orientation.equals("UNKNOWN")) {
             constants.put("initialOrientation", null);
         } else {
             constants.put("initialOrientation", orientation);
@@ -136,10 +137,8 @@ class OrientationModule extends ReactContextBaseJavaModule implements LifecycleE
             return "LANDSCAPE";
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             return "PORTRAIT";
-        } else if (orientation == Configuration.ORIENTATION_UNDEFINED) {
-            return "UNKNOWN";
         } else {
-            return "null";
+            return "UNKNOWN";
         }
     }
 
