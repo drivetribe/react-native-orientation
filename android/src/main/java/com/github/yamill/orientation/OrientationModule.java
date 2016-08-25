@@ -25,10 +25,11 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-public class OrientationModule extends ReactContextBaseJavaModule implements LifecycleEventListener{
-    final BroadcastReceiver receiver;
+class OrientationModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
-    public OrientationModule(ReactApplicationContext reactContext) {
+    private final BroadcastReceiver receiver;
+
+    OrientationModule(ReactApplicationContext reactContext) {
         super(reactContext);
         final ReactApplicationContext ctx = reactContext;
 
@@ -43,9 +44,8 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
                 WritableMap params = Arguments.createMap();
                 params.putString("orientation", orientationValue);
                 if (ctx.hasActiveCatalystInstance()) {
-                    ctx
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit("orientationDidChange", params);
+                    ctx.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("orientationDidChange", params);
                 }
             }
         };
@@ -63,7 +63,7 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
 
         String orientation = this.getOrientationString(orientationInt);
 
-        if (orientation == "null") {
+        if (orientation.equals("UNKNOWN")) {
             callback.invoke(orientationInt, null);
         } else {
             callback.invoke(null, orientation);
@@ -116,12 +116,14 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
     }
 
     @Override
-    public @Nullable Map<String, Object> getConstants() {
-        HashMap<String, Object> constants = new HashMap<String, Object>();
+    public
+    @Nullable
+    Map<String, Object> getConstants() {
+        HashMap<String, Object> constants = new HashMap<>();
         int orientationInt = getReactApplicationContext().getResources().getConfiguration().orientation;
 
         String orientation = this.getOrientationString(orientationInt);
-        if (orientation == "null") {
+        if (orientation.equals("UNKNOWN")) {
             constants.put("initialOrientation", null);
         } else {
             constants.put("initialOrientation", orientation);
@@ -135,10 +137,8 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
             return "LANDSCAPE";
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             return "PORTRAIT";
-        } else if (orientation == Configuration.ORIENTATION_UNDEFINED) {
-            return "UNKNOWN";
         } else {
-            return "null";
+            return "UNKNOWN";
         }
     }
 
@@ -149,15 +149,14 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
         assert activity != null;
         activity.registerReceiver(receiver, new IntentFilter("onConfigurationChanged"));
     }
+
     @Override
     public void onHostPause() {
         final Activity activity = getCurrentActivity();
         if (activity == null) return;
-        try
-        {
+        try {
             activity.unregisterReceiver(receiver);
-        }
-        catch (java.lang.IllegalArgumentException e) {
+        } catch (java.lang.IllegalArgumentException e) {
             FLog.e(ReactConstants.TAG, "receiver already unregistered", e);
         }
     }
@@ -166,11 +165,10 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
     public void onHostDestroy() {
         final Activity activity = getCurrentActivity();
         if (activity == null) return;
-        try
-        {
+        try {
             activity.unregisterReceiver(receiver);
-        }
-        catch (java.lang.IllegalArgumentException e) {
+        } catch (java.lang.IllegalArgumentException e) {
             FLog.e(ReactConstants.TAG, "receiver already unregistered", e);
-        }}
+        }
     }
+}
