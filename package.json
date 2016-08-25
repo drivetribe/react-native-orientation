@@ -1,5 +1,5 @@
 {
-  "name": "react-native-orientation",
+  "name": "@drivetribe/react-native-orientation",
   "version": "1.17.0",
   "description": "Listen to device orientation changes in react-native and set preferred orientation on screen to screen basis",
   "main": "index.js",
@@ -20,7 +20,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/drivetribe/react-native-orientation"
+    "url": "git+https://github.com/drivetribe/react-native-orientation.git"
   },
   "bugs": {
     "url": "https://github.com/drivetribe/react-native-orientation/issues"
