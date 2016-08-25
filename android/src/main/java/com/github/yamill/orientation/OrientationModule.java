@@ -25,10 +25,10 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-public class OrientationModule extends ReactContextBaseJavaModule implements LifecycleEventListener{
-    final BroadcastReceiver receiver;
+class OrientationModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+    private final BroadcastReceiver receiver;
 
-    public OrientationModule(ReactApplicationContext reactContext) {
+    OrientationModule(ReactApplicationContext reactContext) {
         super(reactContext);
         final ReactApplicationContext ctx = reactContext;
 
@@ -43,9 +43,8 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
                 WritableMap params = Arguments.createMap();
                 params.putString("orientation", orientationValue);
                 if (ctx.hasActiveCatalystInstance()) {
-                    ctx
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit("orientationDidChange", params);
+                    ctx.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("orientationDidChange", params);
                 }
             }
         };
@@ -63,7 +62,7 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
 
         String orientation = this.getOrientationString(orientationInt);
 
-        if (orientation == "null") {
+        if (orientation.equals("null")) {
             callback.invoke(orientationInt, null);
         } else {
             callback.invoke(null, orientation);
@@ -116,7 +115,9 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
     }
 
     @Override
-    public @Nullable Map<String, Object> getConstants() {
+    public
+    @Nullable
+    Map<String, Object> getConstants() {
         HashMap<String, Object> constants = new HashMap<String, Object>();
         int orientationInt = getReactApplicationContext().getResources().getConfiguration().orientation;
 
@@ -149,15 +150,14 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
         assert activity != null;
         activity.registerReceiver(receiver, new IntentFilter("onConfigurationChanged"));
     }
+
     @Override
     public void onHostPause() {
         final Activity activity = getCurrentActivity();
         if (activity == null) return;
-        try
-        {
+        try {
             activity.unregisterReceiver(receiver);
-        }
-        catch (java.lang.IllegalArgumentException e) {
+        } catch (java.lang.IllegalArgumentException e) {
             FLog.e(ReactConstants.TAG, "receiver already unregistered", e);
         }
     }
@@ -166,11 +166,10 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
     public void onHostDestroy() {
         final Activity activity = getCurrentActivity();
         if (activity == null) return;
-        try
-        {
+        try {
             activity.unregisterReceiver(receiver);
-        }
-        catch (java.lang.IllegalArgumentException e) {
+        } catch (java.lang.IllegalArgumentException e) {
             FLog.e(ReactConstants.TAG, "receiver already unregistered", e);
-        }}
+        }
     }
+}
