@@ -18,7 +18,41 @@ allprojects {
         jcenter()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url "$projectDir/../../node_modules/react-native/android"
+            url "$rootDir/../node_modules/react-native/android"
         }
     }
+}
+
+project.ext.preDexLibs = !project.hasProperty('disablePreDex')
+
+subprojects {
+    project.plugins.whenPluginAdded { plugin ->
+        if ("com.android.build.gradle.AppPlugin".equals(plugin.class.name)) {
+            project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
+        } else if ("com.android.build.gradle.LibraryPlugin".equals(plugin.class.name)) {
+            project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
+        }
+    }
+
+    ext {
+        reactNativeVersion = getReactNativeVersion()
+    }
+
+}
+
+task clean(type: Delete) {
+    group 'build'
+    delete rootProject.buildDir
+}
+
+import groovy.json.JsonSlurper
+
+def getPackageJson() {
+    def inputFile = new File("../package.json")
+    return new JsonSlurper().parseText(inputFile.text)
+}
+
+def getReactNativeVersion() {
+    def packageJson = getPackageJson()
+    return packageJson.dependencies["react-native"].replace('^', '').replace('~', '')
 }
