@@ -14,18 +14,18 @@
     "android"
   ],
   "peerDependencies": {
-    "react-native": ">=0.5"
+    "react-native": ">=0.31.0"
   },
   "author": "Yamill Vallecillo <yamill@gmail.com> (github.com/yamill)",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yamill/react-native-orientation.git"
+    "url": "git+https://github.com/drivetribe/react-native-orientation"
   },
   "bugs": {
-    "url": "https://github.com/yamill/react-native-orientation/issues"
+    "url": "https://github.com/drivetribe/react-native-orientation/issues"
   },
-  "homepage": "https://github.com/yamill/react-native-orientation#readme",
+  "homepage": "https://github.com/drivetribe/react-native-orientation",
   "rnpm": {
     "android": {
       "packageInstance": "new OrientationPackage()"

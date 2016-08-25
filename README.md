@@ -3,12 +3,6 @@ Listen to device orientation changes in react-native and set preferred orientati
 
 ### Installation
 
-#### via rnpm
-
-Run `rnpm install react-native-orientation`
-
-> Note: rnpm will install and link the library automatically.
-
 #### via npm
 
 Run `npm install react-native-orientation --save`
@@ -17,13 +11,7 @@ Run `npm install react-native-orientation --save`
 
 #### Using rnpm (iOS + Android)
 
-`rnpm link react-native-orientation`
-
-#### Using [CocoaPods](https://cocoapods.org) (iOS Only)
-
-`pod 'react-native-orientation', :path => 'node_modules/react-native-orientation'`
-
-Consult the React Native documentation on how to [install React Native using CocoaPods](https://facebook.github.io/react-native/docs/embedded-app-ios.html#install-react-native-using-cocoapods).
+`react-native link react-native-orientation`
 
 #### Manually
 
@@ -92,29 +80,6 @@ Add the following to your project's `AppDelegate.m`:
   }
 
 @end
-```
-
-#### Android
-
-Implement onConfigurationChanged method (in MainActivity.java)
-
-```
-    import android.content.Intent; // <--- import
-    import android.content.res.Configuration; // <--- import
-
-    public class MainActivity extends ReactActivity {
-      ......
-      @Override
-      public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Intent intent = new Intent("onConfigurationChanged");
-        intent.putExtra("newConfig", newConfig);
-        this.sendBroadcast(intent);
-    }
-
-      ......
-
-    }
 ```
 
 ## Usage
@@ -189,9 +154,3 @@ orientation can return either `LANDSCAPE` `PORTRAIT` `UNKNOWN` `PORTRAITUPSIDEDO
 - `getSpecificOrientation(function(err, specificOrientation)`
 
 specificOrientation can return either `LANDSCAPE-LEFT` `LANDSCAPE-RIGHT` `PORTRAIT` `UNKNOWN` `PORTRAITUPSIDEDOWN`
-
-## TODOS
-
-- [x] Add some way to allow setting a preferred orientation on a screen by screen basis.
-- [x] Make API Cleaner to Orientation Locking
-- [x] Android Support
