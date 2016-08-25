@@ -9,34 +9,50 @@ import {
 
 import Orientation from 'react-native-orientation';
 
+type State = {
+  initialOrientation?: string,
+  orientation?: string,
+  specificOrientation?: string,
+}
+
 class demo extends Component {
-  constructor() {
-    super();
-    const init = Orientation.getInitialOrientation();
-    this.state = {
-      init,
-      or: init,
-    };
-    this._updateOrientation = this._updateOrientation.bind(this);
+
+  state = {};
+
+  componentWillMount() {
+    Orientation.getInitialOrientation()
     Orientation.addOrientationListener(this._updateOrientation);
+    Orientation.addSpecificOrientationListener(this._updateSpecificOrientation);
   }
 
-  _updateOrientation(or) {
-    this.setState({ or });
+  componentWillUnmount() {
+    Orientation.removeOrientationListener(this._updateOrientation);
+    Orientation.removeSpecificOrientationListener(this._updateSpecificOrientation);
   }
+
+  _updateOrientation = (orientation) => {
+    this.setState({ orientation });
+  };
+
+  _updateSpecificOrientation = (specificOrientation) => {
+    this.setState({ specificOrientation });
+  };
 
   render() {
-    const { init, or} = this.state;
+    const { initialOrientation, orientation, specificOrientation } = this.state;
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Welcome to React Native Orientation Demo!
         </Text>
         <Text style={styles.instructions}>
-          {`Initial Orientation: ${init}`}
+          {`Initial Orientation: ${initialOrientation}`}
         </Text>
         <Text style={styles.instructions}>
-          {`Current Orientation: ${or}`}
+          {`Current Orientation: ${orientation}`}
+        </Text>
+        <Text style={styles.instructions}>
+          {`Specific Current Orientation: ${specificOrientation}`}
         </Text>
         <TouchableOpacity
           onPress={Orientation.unlockAllOrientations}
