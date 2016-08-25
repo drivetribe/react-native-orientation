@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 
 class OrientationModule extends ReactContextBaseJavaModule {
 
-
     private final OrientationEventListener mOrientationEventListener;
     private final WindowManager windowManager;
     private final ContentResolver contentResolver;
@@ -36,15 +35,14 @@ class OrientationModule extends ReactContextBaseJavaModule {
     private final String[] mOrientations;
 
     private static final String LANDSCAPE = "LANDSCAPE";
-    private static final String LANDSCAPE_LEFT = "LANDSCAPE-LEFT";
-    private static final String LANDSCAPE_RIGHT = "LANDSCAPE-RIGHT";
+    private static final String LANDSCAPE_LEFT = "LANDSCAPE_LEFT";
+    private static final String LANDSCAPE_RIGHT = "LANDSCAPE_RIGHT";
     private static final String PORTRAIT = "PORTRAIT";
-    private static final String PORTRAIT_UPSIDEDOWN = "PORTRAITUPSIDEDOWN";
+    private static final String PORTRAIT_UPSIDEDOWN = "PORTRAIT_UP_SIDEDOWN";
     private static final String ORIENTATION_UNKNOWN = "UNKNOWN";
-
     private static final int ACTIVE_SECTOR_SIZE = 45;
-    private static final String[] ORIENTATIONS_PORTRAIT_DEVICE = { PORTRAIT, LANDSCAPE_RIGHT, PORTRAIT_UPSIDEDOWN, LANDSCAPE_LEFT };
-    private static final String[] ORIENTATIONS_LANDSCAPE_DEVICE = { LANDSCAPE_LEFT, PORTRAIT, LANDSCAPE_RIGHT, PORTRAIT_UPSIDEDOWN };
+    private static final String[] ORIENTATIONS_PORTRAIT_DEVICE = {PORTRAIT, LANDSCAPE_RIGHT, PORTRAIT_UPSIDEDOWN, LANDSCAPE_LEFT};
+    private static final String[] ORIENTATIONS_LANDSCAPE_DEVICE = {LANDSCAPE_LEFT, PORTRAIT, LANDSCAPE_RIGHT, PORTRAIT_UPSIDEDOWN};
 
     OrientationModule(ReactApplicationContext reactContext) {
         super(reactContext);
