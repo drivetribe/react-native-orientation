@@ -1,12 +1,15 @@
-var Orientation = require('react-native').NativeModules.Orientation;
-var DeviceEventEmitter = require('react-native').DeviceEventEmitter;
+import {
+  DeviceEventEmitter,
+  NativeModules
+} from 'react-native';
+const Orientation = NativeModules.Orientation;
 
-var listeners = {};
-var orientationDidChangeEvent = "orientationDidChange";
-var specificOrientationDidChangeEvent = "specificOrientationDidChange";
+const orientationDidChangeEvent = "orientationDidChange";
+const specificOrientationDidChangeEvent = "specificOrientationDidChange";
+const META = '__listener_id';
 
-var id = 0;
-var META = '__listener_id';
+let listeners = {};
+let id = 0;
 
 function getKey(listener){
   if (!listener.hasOwnProperty(META)){
