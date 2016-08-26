@@ -64,6 +64,19 @@ Run `npm install react-native-orientation --save`
 
 ### Configuration
 
+#### Android
+Add the following to your project's `MainActivity.java`:
+
+```java
+import com.github.yamill.orientation.ConfigurationChangeManager;
+
+@Override
+public void onConfigurationChanged(Configuration newConfig) {
+   super.onConfigurationChanged(newConfig);
+   ConfigurationChangeManager.getInstance().onConfigurationChanged(newConfig);
+}
+```
+
 #### iOS
 
 Add the following to your project's `AppDelegate.m`:
