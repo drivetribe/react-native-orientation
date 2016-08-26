@@ -245,6 +245,9 @@ class OrientationModule extends ReactContextBaseJavaModule implements Configurat
     }
 
     private int getRoundedDeviceOrientation(int orientationValue) {
+        if (orientationValue < 0) {
+            return -1;
+        }
         final int index = (int) ((float) orientationValue / 90f + 0.5f) % 4;
         return index * 90;
     }
