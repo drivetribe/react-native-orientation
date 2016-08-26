@@ -25,7 +25,7 @@ Run `npm install react-native-orientation --save`
 
 1. In `android/setting.gradle`
 
-    ```
+    ```gradle
     ...
     include ':react-native-orientation', ':app'
     project(':react-native-orientation').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-orientation/android')
@@ -33,7 +33,7 @@ Run `npm install react-native-orientation --save`
 
 2. In `android/app/build.gradle`
 
-    ```
+    ```gradle
     ...
     dependencies {
         ...
@@ -43,7 +43,7 @@ Run `npm install react-native-orientation --save`
 
 3. Register module (in MainApplication.java)
 
-    ```
+    ```java
     import com.github.yamill.orientation.OrientationPackage;  // <--- import
 
     public class MainApplication extends Application implements ReactApplication {
