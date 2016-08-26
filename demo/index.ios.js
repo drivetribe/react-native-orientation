@@ -7,7 +7,7 @@ import {
   View
 } from 'react-native';
 
-import Orientation from 'react-native-orientation';
+import Orientation from '@drivetribe/react-native-orientation';
 
 class demo extends Component {
   constructor() {
