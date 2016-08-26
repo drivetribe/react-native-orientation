@@ -6,6 +6,7 @@ const Orientation = NativeModules.Orientation;
 
 const orientationDidChangeEvent = "orientationDidChange";
 const specificOrientationDidChangeEvent = "specificOrientationDidChange";
+const deviceOrientationDidChangeEvent = "deviceOrientationDidChange";
 const META = '__listener_id';
 
 let listeners = {};
@@ -30,6 +31,11 @@ module.exports = {
     });
   },
   getSpecificOrientation(cb) {
+    Orientation.getSpecificOrientation((error,orientation) =>{
+      cb(error, orientation);
+    });
+  },
+  getDeviceOrientation(cb) {
     Orientation.getSpecificOrientation((error,orientation) =>{
       cb(error, orientation);
     });
@@ -72,6 +78,21 @@ module.exports = {
       });
   },
   removeSpecificOrientationListener(cb) {
+    var key = getKey(cb);
+    if (!listeners[key]) {
+      return;
+    }
+    listeners[key].remove();
+    listeners[key] = null;
+  },
+  addDeviceOrientationListener(cb) {
+    var key = getKey(cb);
+    listeners[key] = DeviceEventEmitter.addListener(deviceOrientationDidChangeEvent,
+      (body) => {
+        cb(body.deviceOrientation);
+      });
+  },
+  removeDeviceOrientationListener(cb) {
     var key = getKey(cb);
     if (!listeners[key]) {
       return;

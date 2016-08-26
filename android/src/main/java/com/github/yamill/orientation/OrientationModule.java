@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.SensorManager;
 import android.provider.Settings;
@@ -25,13 +26,14 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-class OrientationModule extends ReactContextBaseJavaModule {
+class OrientationModule extends ReactContextBaseJavaModule implements ConfigurationChangeListener {
 
     private final OrientationEventListener mOrientationEventListener;
     private final WindowManager windowManager;
     private final ContentResolver contentResolver;
-    private String mOrientation;
+
     private String mSpecificOrientation;
+    private int mDeviceOrientation = -1;
     private final String[] mOrientations;
 
     private static final String LANDSCAPE = "LANDSCAPE";
@@ -51,21 +53,20 @@ class OrientationModule extends ReactContextBaseJavaModule {
 
         mOrientations = isLandscapeDevice() ? ORIENTATIONS_LANDSCAPE_DEVICE : ORIENTATIONS_PORTRAIT_DEVICE;
 
-        LifecycleEventListener mLifecycleEventListener = createLifecycleEventListener();
-        reactContext.addLifecycleEventListener(mLifecycleEventListener);
+        reactContext.addLifecycleEventListener(createLifecycleEventListener());
 
-        mOrientationEventListener = createOrientationEventListener(reactContext);
+        mOrientationEventListener = createOrientationEventListener();
     }
 
-    private OrientationEventListener createOrientationEventListener(final ReactApplicationContext reactContext) {
-        return new OrientationEventListener(reactContext, SensorManager.SENSOR_DELAY_NORMAL) {
+    private OrientationEventListener createOrientationEventListener() {
+        return new OrientationEventListener(getReactApplicationContext(), SensorManager.SENSOR_DELAY_NORMAL) {
             @Override
             public void onOrientationChanged(int orientationValue) {
-                if (isDeviceOrientationLocked() || !reactContext.hasActiveCatalystInstance())
+                if (isDeviceOrientationLocked() || !getReactApplicationContext().hasActiveCatalystInstance())
                     return;
 
 
-                if (mOrientation != null && mSpecificOrientation != null) {
+                if (mSpecificOrientation != null) {
                     final int halfSector = ACTIVE_SECTOR_SIZE / 2;
                     if ((orientationValue % 90) > halfSector
                             && (orientationValue % 90) < (90 - halfSector)) {
@@ -73,33 +74,50 @@ class OrientationModule extends ReactContextBaseJavaModule {
                     }
                 }
 
-                final String orientation = getOrientationString(orientationValue);
                 final String specificOrientation = getSpecificOrientationString(orientationValue);
-
-                final DeviceEventManagerModule.RCTDeviceEventEmitter deviceEventEmitter =
-                        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
-
-                if (!orientation.equals(mOrientation)) {
-                    mOrientation = orientation;
-                    WritableMap params = Arguments.createMap();
-                    params.putString("orientation", orientation);
-                    deviceEventEmitter.emit("orientationDidChange", params);
-                }
+                final int deviceOrientation = getRoundedDeviceOrientation(orientationValue);
 
                 if (!specificOrientation.equals(mSpecificOrientation)) {
                     mSpecificOrientation = specificOrientation;
                     WritableMap params = Arguments.createMap();
                     params.putString("specificOrientation", specificOrientation);
-                    deviceEventEmitter.emit("specificOrientationDidChange", params);
+                    emitOrientationEvent("specificOrientationDidChange", params);
+                }
+
+                if (deviceOrientation != mDeviceOrientation) {
+                    mDeviceOrientation = deviceOrientation;
+                    WritableMap params = Arguments.createMap();
+                    params.putInt("deviceOrientation", deviceOrientation);
+                    emitOrientationEvent("deviceOrientationDidChange", params);
                 }
             }
         };
+    }
+
+    @Override
+    public void onConfigurationChange(Configuration newConfig) {
+        ReactApplicationContext reactContext = getReactApplicationContext();
+        if (isDeviceOrientationLocked() || !reactContext.hasActiveCatalystInstance())
+            return;
+
+        String orientationValue = getLayoutOrientationString(newConfig.orientation);
+
+        WritableMap params = Arguments.createMap();
+        params.putString("orientation", orientationValue);
+        emitOrientationEvent("orientationDidChange", params);
+    }
+
+    private void emitOrientationEvent(String eventName, WritableMap params) {
+        getReactApplicationContext()
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit(eventName, params);
     }
 
     private LifecycleEventListener createLifecycleEventListener() {
         return new LifecycleEventListener() {
             @Override
             public void onHostResume() {
+                ConfigurationChangeManager.getInstance().addListener(OrientationModule.this);
                 if (mOrientationEventListener.canDetectOrientation()) {
                     mOrientationEventListener.enable();
                 }
@@ -107,14 +125,24 @@ class OrientationModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onHostPause() {
-                mOrientationEventListener.disable();
+                unregisterListeners();
             }
 
             @Override
             public void onHostDestroy() {
-                mOrientationEventListener.disable();
+                unregisterListeners();
             }
         };
+    }
+
+    @Override
+    public void onCatalystInstanceDestroy() {
+        unregisterListeners();
+    }
+
+    private void unregisterListeners() {
+        ConfigurationChangeManager.getInstance().removeListener(OrientationModule.this);
+        mOrientationEventListener.disable();
     }
 
     @Override
@@ -124,12 +152,17 @@ class OrientationModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getOrientation(Callback callback) {
-        callback.invoke(null, mOrientation);
+        callback.invoke(null, getLayoutOrientationString(getLayoutOrientation()));
     }
 
     @ReactMethod
     public void getSpecificOrientation(Callback callback) {
         callback.invoke(null, mSpecificOrientation);
+    }
+
+    @ReactMethod
+    public void getDeviceOrientation(Callback callback) {
+        callback.invoke(null, mDeviceOrientation);
     }
 
     @ReactMethod
@@ -180,8 +213,22 @@ class OrientationModule extends ReactContextBaseJavaModule {
     @Override
     public @Nullable Map<String, Object> getConstants() {
         HashMap<String, Object> constants = new HashMap<>();
-        constants.put("initialOrientation", mOrientation);
+        constants.put("initialOrientation", getLayoutOrientationString(getLayoutOrientation()));
         return constants;
+    }
+
+    private int getLayoutOrientation() {
+        return getReactApplicationContext().getResources().getConfiguration().orientation;
+    }
+
+    private String getLayoutOrientationString(int orientation) {
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return LANDSCAPE;
+        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            return PORTRAIT;
+        } else {
+            return ORIENTATION_UNKNOWN;
+        }
     }
 
     private boolean isDeviceOrientationLocked() {
@@ -197,26 +244,17 @@ class OrientationModule extends ReactContextBaseJavaModule {
         return size.x > size.y;
     }
 
+    private int getRoundedDeviceOrientation(int orientationValue) {
+        final int index = (int) ((float) orientationValue / 90f + 0.5f) % 4;
+        return index * 90;
+    }
+
     private String getSpecificOrientationString(int orientationValue) {
         if (orientationValue < 0) {
-            return ORIENTATION_UNKNOWN;
+            return getLayoutOrientationString(getLayoutOrientation());
         }
         final int index = (int) ((float) orientationValue / 90f + 0.5f) % 4;
         return mOrientations[index];
-    }
-
-    private String getOrientationString(int orientationValue) {
-        final String specificOrientation = getSpecificOrientationString(orientationValue);
-        switch (specificOrientation) {
-            case LANDSCAPE_LEFT:
-            case LANDSCAPE_RIGHT:
-                return LANDSCAPE;
-            case PORTRAIT:
-            case PORTRAIT_UPSIDEDOWN:
-                return PORTRAIT;
-            default:
-                return ORIENTATION_UNKNOWN;
-        }
     }
 
 }

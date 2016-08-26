@@ -7,12 +7,13 @@ import {
   View
 } from 'react-native';
 
-import Orientation from 'react-native-orientation';
+import Orientation from '@drivetribe/react-native-orientation';
 
 type State = {
   initialOrientation?: string,
   orientation?: string,
   specificOrientation?: string,
+  deviceOrientation?: number,
 }
 
 class demo extends Component {
@@ -20,14 +21,16 @@ class demo extends Component {
   state = {};
 
   componentWillMount() {
-    Orientation.getInitialOrientation()
+    this.setState({ initialOrientation: Orientation.getInitialOrientation() });
     Orientation.addOrientationListener(this._updateOrientation);
     Orientation.addSpecificOrientationListener(this._updateSpecificOrientation);
+    Orientation.addDeviceOrientationListener(this._updateDeviceOrientation);
   }
 
   componentWillUnmount() {
     Orientation.removeOrientationListener(this._updateOrientation);
     Orientation.removeSpecificOrientationListener(this._updateSpecificOrientation);
+    Orientation.removeDeviceOrientationListener(this._updateDeviceOrientation);
   }
 
   _updateOrientation = (orientation) => {
@@ -38,8 +41,12 @@ class demo extends Component {
     this.setState({ specificOrientation });
   };
 
+  _updateDeviceOrientation = (deviceOrientation) => {
+    this.setState({ deviceOrientation });
+  };
+
   render() {
-    const { initialOrientation, orientation, specificOrientation } = this.state;
+    const { initialOrientation, orientation, specificOrientation, deviceOrientation } = this.state;
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -52,7 +59,10 @@ class demo extends Component {
           {`Current Orientation: ${orientation}`}
         </Text>
         <Text style={styles.instructions}>
-          {`Specific Current Orientation: ${specificOrientation}`}
+          {`Specific Orientation: ${specificOrientation}`}
+        </Text>
+        <Text style={styles.instructions}>
+          {`Device Orientation: ${deviceOrientation}`}
         </Text>
         <TouchableOpacity
           onPress={Orientation.unlockAllOrientations}
