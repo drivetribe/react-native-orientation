@@ -1,6 +1,6 @@
 {
   "name": "@drivetribe/react-native-orientation",
-  "version": "1.22.0",
+  "version": "1.22.1",
   "description": "Listen to device orientation changes in react-native and set preferred orientation on screen to screen basis",
   "main": "index.js",
   "scripts": {
