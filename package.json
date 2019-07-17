@@ -25,13 +25,5 @@
   "bugs": {
     "url": "https://github.com/drivetribe/react-native-orientation/issues"
   },
-  "homepage": "https://github.com/drivetribe/react-native-orientation",
-  "rnpm": {
-    "android": {
-      "packageInstance": "new OrientationPackage()"
-    },
-    "ios": {
-      "project": "iOS/RCTOrientation.xcodeproj"
-    }
-  }
+  "homepage": "https://github.com/drivetribe/react-native-orientation"
 }
