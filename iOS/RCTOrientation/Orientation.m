@@ -16,6 +16,11 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
   return _orientation;
 }
 
++ (BOOL)requiresMainQueueSetup
+{
+   return YES;
+}
+
 - (instancetype)init
 {
   if ((self = [super init])) {
