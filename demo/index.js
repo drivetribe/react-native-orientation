@@ -13,7 +13,7 @@ type State = {
   initialOrientation: ?OrientationType,
   orientation: ?OrientationType,
   specificOrientation: ?OrientationType,
-  deviceOrientation: ?OrientationType,
+  deviceOrientation: number,
 };
 
 class demo extends React.PureComponent<*, State> {
@@ -21,7 +21,7 @@ class demo extends React.PureComponent<*, State> {
     initialOrientation: Orientation.getInitialOrientation(),
     orientation: null,
     specificOrientation: null,
-    deviceOrientation: null,
+    deviceOrientation: 0,
   };
 
   constructor(props: *) {
@@ -47,7 +47,7 @@ class demo extends React.PureComponent<*, State> {
     this.setState({ specificOrientation });
   };
 
-  _updateDeviceOrientation = (deviceOrientation: OrientationType) => {
+  _updateDeviceOrientation = (deviceOrientation: number) => {
     this.setState({ deviceOrientation });
   };
 
@@ -73,7 +73,7 @@ class demo extends React.PureComponent<*, State> {
           {`Specific Orientation: ${specificOrientation || 'null'}`}
         </Text>
         <Text style={styles.instructions}>
-          {`Device Orientation: ${deviceOrientation || 'null'}`}
+          {`Device Orientation: ${deviceOrientation}`}
         </Text>
         <Button
           title="Unlock All Orientations"

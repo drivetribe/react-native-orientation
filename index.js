@@ -22,6 +22,7 @@ export type OrientationType =
   | 'UNKNOWN';
 
 type OrientationListener = (orientation: OrientationType) => void;
+type DeviceOrientationListener = (orientation: number) => void;
 
 function getKey(listener) {
   if (!listener.hasOwnProperty(META)) {
@@ -59,9 +60,9 @@ module.exports = {
       });
     });
   },
-  getDeviceOrientation(): Promise<OrientationType> {
+  getDeviceOrientation(): Promise<number> {
     return new Promise((resolve: *, reject: *) => {
-      native.getSpecificOrientation((error, orientation) => {
+      native.getDeviceOrientation((error, orientation) => {
         if (orientation) {
           resolve(orientation);
         } else {
@@ -119,7 +120,7 @@ module.exports = {
     listeners[key].remove();
     listeners[key] = null;
   },
-  addDeviceOrientationListener(cb: OrientationListener) {
+  addDeviceOrientationListener(cb: DeviceOrientationListener) {
     const key = getKey(cb);
     listeners[key] = DeviceEventEmitter.addListener(
       deviceOrientationDidChangeEvent,
@@ -128,7 +129,7 @@ module.exports = {
       },
     );
   },
-  removeDeviceOrientationListener(cb: OrientationListener) {
+  removeDeviceOrientationListener(cb: DeviceOrientationListener) {
     const key = getKey(cb);
     if (!listeners[key]) {
       return;
