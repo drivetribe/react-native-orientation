@@ -98,18 +98,18 @@ Add the following to your project's `AppDelegate.m`:
 ## Usage
 
 Whenever you want to use it within React Native code now you can:
-`var Orientation = require('react-native-orientation');`
+`import Orientation from 'react-native-orientation';`
 
 ```javascript
-  _orientationDidChange: function(orientation) {
+  _orientationDidChange = (orientation: string) => {
     if (orientation == 'LANDSCAPE') {
       //do something with landscape layout
     } else {
       //do something with portrait layout
     }
-  },
+  }
 
-  componentWillMount: function() {
+  constructor() {
     //The getOrientation method is async. It happens sometimes that
     //you need the orientation at the moment the js starts running on device.
     //getInitialOrientation returns directly because its a constant set at the
@@ -120,17 +120,17 @@ Whenever you want to use it within React Native code now you can:
     } else {
       //do other stuff
     }
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     Orientation.lockToPortrait(); //this will lock the view to Portrait
     //Orientation.lockToLandscape(); //this will lock the view to Landscape
     //Orientation.unlockAllOrientations(); //this will unlock the view to all Orientations
 
     Orientation.addOrientationListener(this._orientationDidChange);
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     Orientation.getOrientation((err,orientation)=> {
       console.log("Current Device Orientation: ", orientation);
     });

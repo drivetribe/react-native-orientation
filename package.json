@@ -3,9 +3,16 @@
   "version": "1.24.1",
   "description": "Listen to device orientation changes in react-native and set preferred orientation on screen to screen basis",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "source": "index.js",
+  "files": [
+    "index.js",
+    "android",
+    "ios",
+    "react-native-ad-manager.podspec",
+    "!android/build",
+    "!ios/*.xcodeproj",
+    "!*.DS_Store"
+  ],
   "keywords": [
     "react-component",
     "react-native",
@@ -13,10 +20,7 @@
     "orientation",
     "android"
   ],
-  "peerDependencies": {
-    "react-native": ">=0.31.0"
-  },
-  "author": "Yamill Vallecillo <yamill@gmail.com> (github.com/yamill)",
+  "author": "Yamill Vallecillo <yamill@gmail.com>, Digital Tribe Holdings",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -25,5 +29,62 @@
   "bugs": {
     "url": "https://github.com/drivetribe/react-native-orientation/issues"
   },
-  "homepage": "https://github.com/drivetribe/react-native-orientation"
+  "homepage": "https://github.com/drivetribe/react-native-orientation",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "flow": "flow",
+    "lint": "eslint src/**/*.js",
+    "check": "npm run lint && npm run flow"
+  },
+  "peerDependencies": {
+    "react-native": "*",
+    "react": "*"
+  },
+  "devDependencies": {
+    "@react-native-community/eslint-config": "^2.0.0",
+    "flow-bin": "0.113.0",
+    "eslint": "^7.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "jest": "^26.0.1",
+    "prettier": "^2.0.5",
+    "react": "16.11.0",
+    "react-native": "0.62.2"
+  },
+  "jest": {
+    "preset": "react-native",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/node_modules",
+      "<rootDir>/lib/"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "@react-native-community",
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "quoteProps": "consistent",
+          "singleQuote": true,
+          "tabWidth": 2,
+          "trailingComma": "all",
+          "useTabs": false
+        }
+      ],
+      "react-native/no-inline-styles": "off"
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/"
+  ],
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all",
+    "useTabs": false
+  }
 }

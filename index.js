@@ -1,19 +1,30 @@
-import {
-  DeviceEventEmitter,
-  NativeModules
-} from 'react-native';
+/**
+ * @flow
+ */
+
+import { DeviceEventEmitter, NativeModules } from 'react-native';
 const Orientation = NativeModules.Orientation;
 
-const orientationDidChangeEvent = "orientationDidChange";
-const specificOrientationDidChangeEvent = "specificOrientationDidChange";
-const deviceOrientationDidChangeEvent = "deviceOrientationDidChange";
+const orientationDidChangeEvent = 'orientationDidChange';
+const specificOrientationDidChangeEvent = 'specificOrientationDidChange';
+const deviceOrientationDidChangeEvent = 'deviceOrientationDidChange';
 const META = '__listener_id';
 
 let listeners = {};
 let id = 0;
 
-function getKey(listener){
-  if (!listener.hasOwnProperty(META)){
+export type OrientationType =
+  | 'PORTRAIT'
+  | 'LANDSCAPE'
+  | 'LANDSCAPE-LEFT'
+  | 'LANDSCAPE-RIGHT'
+  | 'PORTRAITUPSIDEDOWN'
+  | 'UNKNOWN';
+
+type OrientationListener = (orientation: OrientationType) => void;
+
+function getKey(listener) {
+  if (!listener.hasOwnProperty(META)) {
     if (!Object.isExtensible(listener)) {
       return 'F';
     }
@@ -21,23 +32,42 @@ function getKey(listener){
       value: 'L' + ++id,
     });
   }
+  // $FlowFixMe
   return listener[META];
-};
+}
 
 module.exports = {
-  getOrientation(cb) {
-    Orientation.getOrientation((error,orientation) =>{
-      cb(error, orientation);
+  getOrientation(): Promise<OrientationType> {
+    return new Promise((resolve: *, reject: *) => {
+      Orientation.getOrientation((error, orientation) => {
+        if (orientation) {
+          resolve(orientation);
+        } else {
+          reject(error);
+        }
+      });
     });
   },
-  getSpecificOrientation(cb) {
-    Orientation.getSpecificOrientation((error,orientation) =>{
-      cb(error, orientation);
+  getSpecificOrientation(): Promise<OrientationType> {
+    return new Promise((resolve: *, reject: *) => {
+      Orientation.getSpecificOrientation((error, orientation) => {
+        if (orientation) {
+          resolve(orientation);
+        } else {
+          reject(error);
+        }
+      });
     });
   },
-  getDeviceOrientation(cb) {
-    Orientation.getSpecificOrientation((error,orientation) =>{
-      cb(error, orientation);
+  getDeviceOrientation(): Promise<OrientationType> {
+    return new Promise((resolve: *, reject: *) => {
+      Orientation.getSpecificOrientation((error, orientation) => {
+        if (orientation) {
+          resolve(orientation);
+        } else {
+          reject(error);
+        }
+      });
     });
   },
   lockToPortrait() {
@@ -55,14 +85,16 @@ module.exports = {
   unlockAllOrientations() {
     Orientation.unlockAllOrientations();
   },
-  addOrientationListener(cb) {
+  addOrientationListener(cb: OrientationListener) {
     var key = getKey(cb);
-    listeners[key] = DeviceEventEmitter.addListener(orientationDidChangeEvent,
+    listeners[key] = DeviceEventEmitter.addListener(
+      orientationDidChangeEvent,
       (body) => {
         cb(body.orientation);
-      });
+      },
+    );
   },
-  removeOrientationListener(cb) {
+  removeOrientationListener(cb: OrientationListener) {
     var key = getKey(cb);
     if (!listeners[key]) {
       return;
@@ -70,14 +102,16 @@ module.exports = {
     listeners[key].remove();
     listeners[key] = null;
   },
-  addSpecificOrientationListener(cb) {
+  addSpecificOrientationListener(cb: OrientationListener) {
     var key = getKey(cb);
-    listeners[key] = DeviceEventEmitter.addListener(specificOrientationDidChangeEvent,
+    listeners[key] = DeviceEventEmitter.addListener(
+      specificOrientationDidChangeEvent,
       (body) => {
         cb(body.specificOrientation);
-      });
+      },
+    );
   },
-  removeSpecificOrientationListener(cb) {
+  removeSpecificOrientationListener(cb: OrientationListener) {
     var key = getKey(cb);
     if (!listeners[key]) {
       return;
@@ -85,14 +119,16 @@ module.exports = {
     listeners[key].remove();
     listeners[key] = null;
   },
-  addDeviceOrientationListener(cb) {
+  addDeviceOrientationListener(cb: OrientationListener) {
     var key = getKey(cb);
-    listeners[key] = DeviceEventEmitter.addListener(deviceOrientationDidChangeEvent,
+    listeners[key] = DeviceEventEmitter.addListener(
+      deviceOrientationDidChangeEvent,
       (body) => {
         cb(body.deviceOrientation);
-      });
+      },
+    );
   },
-  removeDeviceOrientationListener(cb) {
+  removeDeviceOrientationListener(cb: OrientationListener) {
     var key = getKey(cb);
     if (!listeners[key]) {
       return;
@@ -102,5 +138,5 @@ module.exports = {
   },
   getInitialOrientation() {
     return Orientation.initialOrientation;
-  }
-}
+  },
+};

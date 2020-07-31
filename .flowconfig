@@ -25,6 +25,9 @@ node_modules/warning/.*
 ; Ignore Android directory
 .*/android/.*
 
+; Ignore example in root
+.*/Example/.*
+
 [include]
 
 [libs]

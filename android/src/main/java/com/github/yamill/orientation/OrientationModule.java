@@ -207,6 +207,7 @@ class OrientationModule extends ReactContextBaseJavaModule implements Configurat
         if (activity == null) {
             return;
         }
+        // TODO: sensor?
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 

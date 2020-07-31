@@ -3,11 +3,22 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start"
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "flow": "flow",
+    "lint": "eslint *js",
+    "check": "npm run lint && npm run flow"
   },
   "dependencies": {
-    "react": "15.2.1",
-    "react-native": "0.31.0",
-    "react-native-orientation": "file:../"
+    "react": "16.11.0",
+    "react-native": "0.62.2",
+    "@drivetribe/react-native-orientation": "file:../"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/runtime": "^7.9.6",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "flow-bin": "0.113.0",
+    "metro-react-native-babel-preset": "^0.59.0"
   }
 }
