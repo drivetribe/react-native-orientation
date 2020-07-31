@@ -22,9 +22,7 @@ allprojects {
             url "$rootDir/../node_modules/react-native/android"
         }
     }
-}
 
-subprojects {
     ext {
         compileSdkVersion = 29
         minSdkVersion = 21
@@ -40,12 +38,12 @@ task clean(type: Delete) {
 
 import groovy.json.JsonSlurper
 
-def getPackageJson() {
+static def getPackageJson() {
     def inputFile = new File("../package.json")
     return new JsonSlurper().parseText(inputFile.text)
 }
 
-def getReactNativeVersion() {
+static def getReactNativeVersion() {
     def packageJson = getPackageJson()
     return packageJson.dependencies["react-native"].replace('^', '').replace('~', '')
 }

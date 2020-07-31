@@ -19,6 +19,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.util.HashMap;
@@ -26,7 +27,9 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+@ReactModule(name = OrientationModule.NAME)
 class OrientationModule extends ReactContextBaseJavaModule implements ConfigurationChangeListener {
+    static final String NAME = "Orientation";
 
     private final OrientationEventListener mOrientationEventListener;
     private final WindowManager windowManager;
@@ -56,6 +59,11 @@ class OrientationModule extends ReactContextBaseJavaModule implements Configurat
         reactContext.addLifecycleEventListener(createLifecycleEventListener());
 
         mOrientationEventListener = createOrientationEventListener();
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 
     private OrientationEventListener createOrientationEventListener() {
@@ -145,11 +153,6 @@ class OrientationModule extends ReactContextBaseJavaModule implements Configurat
         mOrientationEventListener.disable();
     }
 
-    @Override
-    public String getName() {
-        return "Orientation";
-    }
-
     @ReactMethod
     public void getOrientation(Callback callback) {
         callback.invoke(null, getLayoutOrientationString(getLayoutOrientation()));
@@ -207,12 +210,12 @@ class OrientationModule extends ReactContextBaseJavaModule implements Configurat
         if (activity == null) {
             return;
         }
-        // TODO: sensor?
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
     }
 
     @Override
-    public @Nullable Map<String, Object> getConstants() {
+    public @Nullable
+    Map<String, Object> getConstants() {
         HashMap<String, Object> constants = new HashMap<>();
         constants.put("initialOrientation", getLayoutOrientationString(getLayoutOrientation()));
         return constants;

@@ -3,7 +3,7 @@
  */
 
 import { DeviceEventEmitter, NativeModules } from 'react-native';
-const Orientation = NativeModules.Orientation;
+const native = NativeModules.Orientation;
 
 const orientationDidChangeEvent = 'orientationDidChange';
 const specificOrientationDidChangeEvent = 'specificOrientationDidChange';
@@ -39,7 +39,7 @@ function getKey(listener) {
 module.exports = {
   getOrientation(): Promise<OrientationType> {
     return new Promise((resolve: *, reject: *) => {
-      Orientation.getOrientation((error, orientation) => {
+      native.getOrientation((error, orientation) => {
         if (orientation) {
           resolve(orientation);
         } else {
@@ -50,7 +50,7 @@ module.exports = {
   },
   getSpecificOrientation(): Promise<OrientationType> {
     return new Promise((resolve: *, reject: *) => {
-      Orientation.getSpecificOrientation((error, orientation) => {
+      native.getSpecificOrientation((error, orientation) => {
         if (orientation) {
           resolve(orientation);
         } else {
@@ -61,7 +61,7 @@ module.exports = {
   },
   getDeviceOrientation(): Promise<OrientationType> {
     return new Promise((resolve: *, reject: *) => {
-      Orientation.getSpecificOrientation((error, orientation) => {
+      native.getSpecificOrientation((error, orientation) => {
         if (orientation) {
           resolve(orientation);
         } else {
@@ -71,22 +71,22 @@ module.exports = {
     });
   },
   lockToPortrait() {
-    Orientation.lockToPortrait();
+    native.lockToPortrait();
   },
   lockToLandscape() {
-    Orientation.lockToLandscape();
+    native.lockToLandscape();
   },
   lockToLandscapeRight() {
-    Orientation.lockToLandscapeRight();
+    native.lockToLandscapeRight();
   },
   lockToLandscapeLeft() {
-    Orientation.lockToLandscapeLeft();
+    native.lockToLandscapeLeft();
   },
   unlockAllOrientations() {
-    Orientation.unlockAllOrientations();
+    native.unlockAllOrientations();
   },
   addOrientationListener(cb: OrientationListener) {
-    var key = getKey(cb);
+    const key = getKey(cb);
     listeners[key] = DeviceEventEmitter.addListener(
       orientationDidChangeEvent,
       (body) => {
@@ -95,7 +95,7 @@ module.exports = {
     );
   },
   removeOrientationListener(cb: OrientationListener) {
-    var key = getKey(cb);
+    const key = getKey(cb);
     if (!listeners[key]) {
       return;
     }
@@ -103,7 +103,7 @@ module.exports = {
     listeners[key] = null;
   },
   addSpecificOrientationListener(cb: OrientationListener) {
-    var key = getKey(cb);
+    const key = getKey(cb);
     listeners[key] = DeviceEventEmitter.addListener(
       specificOrientationDidChangeEvent,
       (body) => {
@@ -112,7 +112,7 @@ module.exports = {
     );
   },
   removeSpecificOrientationListener(cb: OrientationListener) {
-    var key = getKey(cb);
+    const key = getKey(cb);
     if (!listeners[key]) {
       return;
     }
@@ -120,7 +120,7 @@ module.exports = {
     listeners[key] = null;
   },
   addDeviceOrientationListener(cb: OrientationListener) {
-    var key = getKey(cb);
+    const key = getKey(cb);
     listeners[key] = DeviceEventEmitter.addListener(
       deviceOrientationDidChangeEvent,
       (body) => {
@@ -129,7 +129,7 @@ module.exports = {
     );
   },
   removeDeviceOrientationListener(cb: OrientationListener) {
-    var key = getKey(cb);
+    const key = getKey(cb);
     if (!listeners[key]) {
       return;
     }
@@ -137,6 +137,6 @@ module.exports = {
     listeners[key] = null;
   },
   getInitialOrientation() {
-    return Orientation.initialOrientation;
+    return native.initialOrientation;
   },
 };
