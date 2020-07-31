@@ -8,7 +8,7 @@
     "index.js",
     "android",
     "ios",
-    "react-native-ad-manager.podspec",
+    "react-native-orientation.podspec",
     "!android/build",
     "!ios/*.xcodeproj",
     "!*.DS_Store"
